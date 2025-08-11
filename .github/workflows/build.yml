@@ -8,37 +8,30 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+    - name: 🔁 Checkout code
+      uses: actions/checkout@v3
 
-      - name: Set up Python 3.8
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.8'
+    - name: 🧰 Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.8'
 
-      - name: Install system dependencies
-        run: |
-          sudo apt update
-          sudo apt install -y \
-            build-essential libssl-dev libffi-dev python3-dev \
-            libsqlite3-dev zlib1g-dev libncurses5-dev libjpeg-dev \
-            libpng-dev libfreetype6-dev pkg-config zip unzip openjdk-17-jdk git curl
+    - name: 📦 Install dependencies
+      run: |
+        pip install --upgrade pip
+        pip install buildozer
 
-      - name: Install Buildozer
-        run: |
-          pip install --upgrade pip
-          pip install buildozer cython
+    - name: 🛠️ Fix AIDL manually
+      run: |
+        mkdir -p ~/.buildozer/android/platform/android-sdk/platforms/android-30
+        curl -o ~/.buildozer/android/platform/android-sdk/platforms/android-30/aidl \
+          https://raw.githubusercontent.com/android/aidl/master/aidl
+        chmod +x ~/.buildozer/android/platform/android-sdk/platforms/android-30/aidl
 
-      - name: Build APK
-        run: |
-          cd ${{ github.workspace }}
-          buildozer -v android debug
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: Squad-MCQ-APK
-          path: bin/*.apk
+    - name: 🚀 Build APK (ARM64 tuned)
+      run: |
+        sed -i 's/^android.arch =/android.archs =/' buildozer.spec
+        sed -i 's/^android.archs = .*/android.archs = arm64-v8a/' buildozer.spec
+        buildozer android debug
