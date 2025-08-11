@@ -1,4 +1,4 @@
-name: 🏗️ Squad APK Build
+name: 🚀 Build Squad MCQ APK
 
 on:
   push:
@@ -6,37 +6,39 @@ on:
       - main
 
 jobs:
-  build:
+  build-apk:
+    name: Build APK
     runs-on: ubuntu-latest
 
     steps:
-    - name: 📥 Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: 🐍 Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
 
-    - name: 🧱 Install dependencies
-      run: |
-        sudo apt update
-        sudo apt install -y libncurses5 libz-dev libsqlite3-dev zip unzip openjdk-17-jdk
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            python3-pip python3-setuptools python3-dev build-essential \
+            git zip unzip openjdk-8-jdk zlib1g-dev libncurses5-dev libssl-dev libffi-dev
 
-    - name: ⚙️ Install Buildozer
-      run: |
-        pip install --upgrade pip
-        pip install buildozer
+      - name: Upgrade pip & install Buildozer
+        run: |
+          pip install --upgrade pip
+          pip install cython buildozer
 
-    - name: 🚧 Build APK
-      run: |
-        cd ${{ github.workspace }}
-        buildozer android debug
+      - name: Accept Android SDK licenses
+        run: yes | buildozer android sdk --sdk-platform=android-27
 
-    - name: 📦 Upload APK
-      uses: actions/upload-artifact@v4
-      with:
-        name: Squad-MCQ-APK
-        path: bin/*.apk
-requirements = python3,kivy
-source.include_exts = py,png,jpg,kv,atlas
+      - name: Build debug APK
+        run: buildozer android debug --verbose
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Squad-MCQ-APK
+          path: bin/*.apk
