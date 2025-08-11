@@ -1,8 +1,7 @@
-# 🧠 Squad MCQ App (for medical aspirants)
+#![Squad Logo](https://raw.githubusercontent.com/pagol112/squad-mcq-app-3.-Make-it-public/main/assets/squad-logo.png)
 
+# Squad MCQ App (for medical aspirants)
 Offline MCQ app for HSC/Medical prep — built with Bangla voice input, Termux deployment, and pure squad energy.
-
----
 
 ## 🚀 Download APK
 
