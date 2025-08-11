@@ -38,3 +38,5 @@ jobs:
       with:
         name: Squad-MCQ-APK
         path: bin/*.apk
+requirements = python3,kivy
+source.include_exts = py,png,jpg,kv,atlas
