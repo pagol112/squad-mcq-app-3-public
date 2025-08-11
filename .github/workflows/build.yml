@@ -1,37 +1,72 @@
-name: Squad APK Build
+name: 🚀 Build Android APK
 
 on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
-  build:
+  build-android:
+    name: 🏗️ Build APK
     runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    env:
+      ANDROID_API: '31'
+      ANDROID_BUILD_TOOLS: '31.0.0'
+      ANDROID_NDK: '23.1.7779620'
+      ANDROID_HOME: ${{ runner.tool_cache }}/android-sdk
 
     steps:
-    - name: 🔁 Checkout code
-      uses: actions/checkout@v3
+      - name: 🔍 Checkout code
+        uses: actions/checkout@v3
 
-    - name: 🧰 Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.8'
+      - name: ☕ Setup JDK 11
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: '11'
 
-    - name: 📦 Install dependencies
-      run: |
-        pip install --upgrade pip
-        pip install buildozer
+      - name: 📦 Install system dependencies
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y \
+            python3-pip python3-dev build-essential \
+            zip unzip git wget cmake
 
-    - name: 🛠️ Fix AIDL manually
-      run: |
-        mkdir -p ~/.buildozer/android/platform/android-sdk/platforms/android-30
-        curl -o ~/.buildozer/android/platform/android-sdk/platforms/android-30/aidl \
-          https://raw.githubusercontent.com/android/aidl/master/aidl
-        chmod +x ~/.buildozer/android/platform/android-sdk/platforms/android-30/aidl
+      - name: 📱 Setup Android SDK & NDK
+        uses: android-actions/setup-android@v2
+        with:
+          api-level: ${{ env.ANDROID_API }}
+          build-tools: ${{ env.ANDROID_BUILD_TOOLS }}
+          ndk: ${{ env.ANDROID_NDK }}
+          accept-licenses: true
 
-    - name: 🚀 Build APK (ARM64 tuned)
-      run: |
-        sed -i 's/^android.arch =/android.archs =/' buildozer.spec
-        sed -i 's/^android.archs = .*/android.archs = arm64-v8a/' buildozer.spec
-        buildozer android debug
+      - name: 🐍 Setup Python & pip
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: 📥 Install Python packages
+        run: |
+          python3 -m pip install --upgrade pip setuptools wheel
+          pip install buildozer cython
+
+      - name: 🧹 Clean previous builds
+        run: |
+          rm -rf ./.buildozer
+          mkdir -p ./.buildozer
+
+      - name: 🏗️ Build APK (debug)
+        run: |
+          buildozer android debug
+        env:
+          ANDROIDSDK: ${{ env.ANDROID_HOME }}
+          ANDROIDNDK: ${{ env.ANDROID_NDK }}
+
+      - name: 📤 Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug-apk
+          path: bin/*.apk
