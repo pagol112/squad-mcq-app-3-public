@@ -8,55 +8,37 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
-      - name: 🧲 Checkout code
-        uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      - name: 🐍 Set up Python
+      - name: Set up Python 3.8
         uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
+          python-version: '3.8'
 
-      - name: 🧱 Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install buildozer cython
-
-      - name: 📦 Install system packages
+      - name: Install system dependencies
         run: |
           sudo apt update
           sudo apt install -y \
-            build-essential \
-            libssl-dev \
-            libffi-dev \
-            python3-dev \
-            libsqlite3-dev \
-            zlib1g-dev \
-            libncurses5-dev \
-            libncursesw5-dev \
-            libreadline-dev \
-            libgdbm-dev \
-            libbz2-dev \
-            liblzma-dev \
-            libgmp-dev \
-            libpng-dev \
-            libjpeg-dev \
-            libfreetype6-dev \
-            pkg-config \
-            zip \
-            unzip \
-            openjdk-17-jdk \
-            git \
-            curl
+            build-essential libssl-dev libffi-dev python3-dev \
+            libsqlite3-dev zlib1g-dev libncurses5-dev libjpeg-dev \
+            libpng-dev libfreetype6-dev pkg-config zip unzip openjdk-17-jdk git curl
 
-      - name: 🛠️ Build APK
+      - name: Install Buildozer
+        run: |
+          pip install --upgrade pip
+          pip install buildozer cython
+
+      - name: Build APK
         run: |
           cd ${{ github.workspace }}
           buildozer -v android debug
 
-      - name: 📤 Upload APK
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: squad-apk
+          name: Squad-MCQ-APK
           path: bin/*.apk
