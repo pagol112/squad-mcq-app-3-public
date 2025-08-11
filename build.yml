@@ -39,3 +39,4 @@ jobs:
       with:
         name: SquadMCQ-APK
         path: bin/*.apk
+        
