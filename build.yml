@@ -1,4 +1,4 @@
-name: Build APK
+name: SquadMCQ Build
 
 on:
   push:
@@ -7,27 +7,35 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-    - name: Checkout code
+    - name: 🧠 Checkout Code
       uses: actions/checkout@v2
 
-    - name: Set up Python
-      uses: actions/setup-python@v2
+    - name: 🐍 Set Up Python
+      uses: actions/setup-python@v4
       with:
         python-version: '3.10'
 
-    - name: Install dependencies
+    - name: 🛠️ Install Dependencies
       run: |
         sudo apt update
         sudo apt install -y build-essential libffi-dev libssl-dev python3-pip python3-setuptools python3-wheel git zip unzip openjdk-11-jdk
-        pip install buildozer
+        pip install --upgrade pip
+        pip install buildozer cython
 
-    - name: Build APK
+    - name: ⚙️ Initialize Buildozer (if missing)
       run: |
-        buildozer android debug
+        if [ ! -f buildozer.spec ]; then
+          buildozer init
+        fi
 
-    - name: Upload APK
-      uses: actions/upload-artifact@v2
+    - name: 📦 Build APK
+      run: |
+        buildozer -v android debug
+
+    - name: 🚀 Upload APK Artifact
+      uses: actions/upload-artifact@v3
       with:
         name: SquadMCQ-APK
         path: bin/*.apk
