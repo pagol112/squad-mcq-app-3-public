@@ -18,13 +18,19 @@ jobs:
       with:
         python-version: '3.10'
 
-    - name: 📦 Install Dependencies
+    - name: ☕ Setup Java
+      uses: actions/setup-java@v3
+      with:
+        distribution: temurin
+        java-version: '17'
+
+    - name: 📦 Install System Dependencies
       run: |
         sudo apt update
         sudo apt install -y build-essential libssl-dev libffi-dev \
           python3-dev python3-pip git zip unzip openjdk-17-jdk \
-          libsqlite3-dev libncurses5 libncurses5-dev libtiff5 libjpeg8 \
-          libpng-dev libx11-dev libfreetype6-dev liblcms2-dev libwebp-dev \
+          libsqlite3-dev libjpeg-dev libpng-dev libx11-dev \
+          libfreetype6-dev liblcms2-dev libwebp-dev \
           libharfbuzz-dev libfribidi-dev libxcb1-dev libgl1-mesa-dev
 
     - name: 🚀 Install Buildozer
@@ -33,8 +39,7 @@ jobs:
         pip install buildozer
 
     - name: 🛠 Build APK
-      run: |
-        buildozer android debug
+      run: buildozer android debug
 
     - name: 📤 Upload APK Artifact
       uses: actions/upload-artifact@v4
