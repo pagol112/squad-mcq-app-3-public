@@ -33,10 +33,10 @@ jobs:
           libfreetype6-dev liblcms2-dev libwebp-dev \
           libharfbuzz-dev libfribidi-dev libxcb1-dev libgl1-mesa-dev
 
-    - name: 🚀 Install Buildozer
+    - name: 🚀 Install Buildozer & Cython
       run: |
         pip install --upgrade pip
-        pip install buildozer
+        pip install buildozer cython
 
     - name: 🛠 Build APK
       run: buildozer android debug
