@@ -10,23 +10,23 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: 🔁 কোড নিচ্ছে
+    - name: 🔁 Checkout code
       uses: actions/checkout@v3
 
-    - name: 🐍 পাইথন সেটআপ
+    - name: 🐍 Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.10'
 
-    - name: 📦 সিস্টেম ডিপেন্ডেন্সি ইনস্টল
+    - name: 📦 Install system dependencies
       run: |
         sudo apt update
         sudo apt install -y build-essential libssl-dev libffi-dev python3-dev python3-pip unzip openjdk-11-jdk
 
-    - name: 🧪 Buildozer & Cython ইনস্টল
+    - name: 🧪 Install Buildozer & Cython
       run: |
         pip install --upgrade pip
         pip install buildozer cython
 
-    - name: 🚀 APK বানাচ্ছে
+    - name: 🚀 Build APK
       run: buildozer android debug
