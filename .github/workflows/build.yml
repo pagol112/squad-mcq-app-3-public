@@ -38,6 +38,14 @@ jobs:
         pip install --upgrade pip
         pip install buildozer cython
 
+    - name: ✅ Accept Android SDK Licenses
+      run: |
+        yes | sdkmanager --licenses
+
+    - name: 📦 Install Android Build Tools 33.0.2
+      run: |
+        sdkmanager "build-tools;33.0.2"
+
     - name: 🛠 Build APK
       run: buildozer android debug
 
