@@ -7,8 +7,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      ANDROID_HOME: ${{ runner.home }}/android-sdk
+    env:env:
+  ANDROID_HOME: ${{ env.HOME }}/android-sdk
 
     steps:
     - name: ✅ Checkout Code
