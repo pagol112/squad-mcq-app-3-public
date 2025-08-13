@@ -2,7 +2,7 @@ name: SquadMCQ Build
 
 on:
   push:
-    branches: [master]
+    branches: [main]
 
 jobs:
   build:
@@ -30,10 +30,10 @@ jobs:
         buildozer -v android debug
 
     - name: Rename APK
-      run: mv bin/*.apk squad-v3.apk
+      run: mv bin/*.apk squad-app.apk
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
         name: squad-apk
-        path: squad-v3.apk
+        path: squad-app.apk
